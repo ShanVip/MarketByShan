@@ -26,12 +26,12 @@ public class RegistrationController {
 
 
     @GetMapping("/register/user")
-    public String registerPage(Principal principal) {
-        return "register";
+    public String registerPageUser(Principal principal) {
+        return "register user";
     }
 
     @PostMapping("/register/user")
-    public ResponseEntity<?> register(@ModelAttribute("user") User user, @RequestParam("password") String password, BindingResult result) {
+    public ResponseEntity<?> registerUser(@ModelAttribute("user") User user, @RequestParam("password") String password, BindingResult result) {
 
         // проверка ошибок валидации
         if (result.hasErrors()) {
@@ -59,4 +59,41 @@ public class RegistrationController {
 
         return ResponseEntity.ok("User registered successfully!");
     }
+
+    @GetMapping("/register/seller")
+    public String registerPageSeller(Principal principal) {
+        return "register seller";
+    }
+
+    @PostMapping("/register/seller")
+    public ResponseEntity<?> registerSeller(@ModelAttribute("seller") User user, @RequestParam("password") String password, BindingResult result) {
+
+        // проверка ошибок валидации
+        if (result.hasErrors()) {
+            // возвращаем ошибки в виде JSON-объекта
+            return ResponseEntity.badRequest().body(result.getFieldErrors());
+        }
+
+        // проверка наличия пользователей с таким же логином или почтой
+        if (userService.existsByUsernameOrEmail(user.getUsername(), user.getEmail())) {
+            return ResponseEntity.badRequest().body("Username or email is already taken!");
+        }
+
+        // проверка наличия ролей
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleService.findByName("ROLE_SELLER");
+        if (userRole != null) {
+            roles.add(userRole);
+        }
+
+        // устанавливаем пароль
+        user.setPassword(password);
+
+        // сохраняем пользователя в базу данных
+        userService.registerUser(user, roles);
+
+        return ResponseEntity.ok("User registered successfully!");
+    }
 }
+
+
