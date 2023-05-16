@@ -16,7 +16,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=example
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
-      - "9000:9000"
+      - "9001:9001"
   db:
     image: postgres
     restart: always

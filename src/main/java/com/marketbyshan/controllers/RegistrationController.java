@@ -17,6 +17,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST})
 public class RegistrationController {
 
     @Autowired
